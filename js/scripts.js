@@ -1,6 +1,32 @@
 console.log('hi');
 
-document.createElement('form')
+const url = 'https://randomuser.me/api/?results=12';
+let names = [];
+fetch(url)
+  .then(info => info.json())
+  .then(data => {
+    let n = data.results[0].name;
+    names.push(n);
+    console.log(names);
+});
+
+function findMatches(wordToMatch, names){
+  return names.filter(name => {
+    //names must match what is searched
+    const regex = new RegExp(wordToMatch, 'gi')//global and match lower/upper case
+    return name.first.match(regex) || name.last.match(regex);
+  });
+}
+
+function displayMatches(){
+  console.log(this.value);
+}
+const searchInput = document.querySelector('.search-input');
+console.log(searchInput);
+// searchInput.addEventListener('change', ()=>{
+//   console.log(e.target.value);
+// });
+
 
 /* FETCH FUNCTIONS */
 $.ajax({
@@ -8,7 +34,7 @@ $.ajax({
   dataType: 'json',
   success: function(data) {
     let results = data.results;
-    console.log(results);
+    //console.log(results);
     displayEmployees(results);
 
     /*search bar needs added functionality to go through list
@@ -46,7 +72,7 @@ function displayEmployees(data){
   } //end for
   let g= document.querySelector('#gallery');
   $(g).append(employeeBubble);//show to screen
-  console.log(g);
+  //console.log(g);
 } //end displayEmployees
 
 /*////////////////////
@@ -55,5 +81,5 @@ function displayEmployees(data){
 
 
 /*//////////////
-    POST DATA 
+    POST DATA
 //////////////*/
