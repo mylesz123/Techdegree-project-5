@@ -16,16 +16,20 @@ $('.search-container').append(searchBar);
 /*///////////////////
     FETCH FUNCTIONS
 ///////////////////*/
-
-$.ajax({
-  url: url,
-  dataType: 'json',
-  success: function(data) {
-    let results = data.results;
-    //console.log(results);
-    displayEmployees(results);
-  }//end success
-});
+fetch(url)
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.results);
+    displayEmployees(data.results);
+  });
+// $.ajax({
+//   url: url,
+//   dataType: 'json',
+//   success: function(data) {
+//     console.log(data.results);
+//     displayEmployees(data.results);
+//   }//end success
+// });
 
 /*///////////////////
     HELP FUNCTIONS
@@ -34,8 +38,9 @@ $.ajax({
 //make, Image, First and Last Name, Email, & City  appear
 function displayEmployees(data){
   console.log(data);
-  let employeeBubble = '';
+  let employeeBubble = ''
   for (let i = 0; i < data.length; i++){
+    console.log(data[i]);
     employeeBubble += `
     <div class="card">
         <div class="card-img-container">
@@ -49,35 +54,50 @@ function displayEmployees(data){
     </div>
     `;
   } //end LOOP
-  //let g= document.querySelector('#gallery');
-  $('#gallery').append(employeeBubble);//show to screen    //console.log(g);
+  $(employeeBubble).appendTo('#gallery');//show to screen    //console.log(g);
 
-  $('.card').on('click', () => {//when clicked, card should popup
-    popup(data[$('.card').index(this)]);
+
+  function popup(){
+    //console.log(results);
+    console.log(data);
+    let card;
+    for(let i = 0; i < data.length; i++){
+      let date = data[i].dob.date
+      let month = date.slice(5,7);
+      let day = date.slice(8,10);
+      let year = date.slice(0,4);
+      card = `
+        <div class="modal-container">
+          <div class="modal">
+            <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+              <div class="modal-info-container">
+                <img class="modal-img" src="${data[i].picture.large} " alt="profile picture">
+                <h3 id="name" class="modal-name cap">${data[i].name.first} ${data[i].name.last}</h3>
+                <p class="modal-text">${data[i].email}</p>
+                <p class="modal-text cap">${data[i].location.city}, ${data[i].location.state}</p>
+                <hr>
+                <p class="modal-text">${data[i].phone}</p>
+                <p class="modal-text">${data[i].location.street}, ${data[i].location.state} ${data[i].location.postcode}</p>
+                <p class="modal-text">Birthday:${month}/${day}/${year}</p>
+              </div>
+      `;
+    }
+
+
+      document.querySelector('div').innerHTML += card;
+
+      $('#modal-close-btn').on('click', () => { //make X button work
+        $('.modal-container').remove();
+      });
+  }//end popup
+  //when clicked, card should popup
+  $('.card').on('click', () => {
+    let clickedCard = $('.card').index(this);
+    console.log(clickedCard); //not getting expected output
+    popup(data[clickedCard]);
   });
 } //end displayEmployees
 
-function popup(data){
-  console.log(data);
-  let card = '';
-  card += `
-    <div class="modal-container">
-        <div class="modal">
-            <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-            <div class="modal-info-container">
-                <img class="modal-img" src="${data.picture.large} " alt="profile picture">
-                <h3 id="name" class="modal-name cap">${data.name.first} ${data.name.last}</h3>
-                <p class="modal-text">${data.email}</p>
-                <p class="modal-text cap">${data.location.city}</p>
-                <hr>
-                <p class="modal-text">${data.phone}</p>
-                <p class="modal-text">${data.location.street}, ${data.location.state} ${data.location.postcode}</p>
-                <p class="modal-text">Birthday:${month}/${day}/${year}</p>
-            </div>
-            `;
-
-    $('div .modal').append(card);
-}
 
 function displayMatches(e){
   $('.card').hide();
@@ -100,9 +120,8 @@ function displayMatches(e){
 ////////////////////*/
 
 $('#search-input').on('keyup', displayMatches);//keyup for live search
-$('#modal-close-btn').on('click', ()=> { //make X button work
-  $('.modal-container').remove();
-});
+
+
 /*//////////////
     POST DATA
 //////////////*/
