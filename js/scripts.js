@@ -16,20 +16,15 @@ $('.search-container').append(searchBar);
 /*///////////////////
     FETCH FUNCTIONS
 ///////////////////*/
-fetch(url)
-  .then(res => res.json())
-  .then(data => {
+
+$.ajax({
+  url: url,
+  dataType: 'json',
+  success: function(data) {
     console.log(data.results);
     displayEmployees(data.results);
-  });
-// $.ajax({
-//   url: url,
-//   dataType: 'json',
-//   success: function(data) {
-//     console.log(data.results);
-//     displayEmployees(data.results);
-//   }//end success
-// });
+  }//end success
+});
 
 /*///////////////////
     HELP FUNCTIONS
@@ -40,7 +35,7 @@ function displayEmployees(data){
   console.log(data);
   let employeeBubble = ''
   for (let i = 0; i < data.length; i++){
-    console.log(data[i]);
+    //console.log(data[i]);
     employeeBubble += `
     <div class="card">
         <div class="card-img-container">
@@ -58,8 +53,7 @@ function displayEmployees(data){
 
 
   function popup(){
-    //console.log(results);
-    console.log(data);
+    //console.log(data);
     let card;
     for(let i = 0; i < data.length; i++){
       let date = data[i].dob.date
@@ -81,25 +75,27 @@ function displayEmployees(data){
                 <p class="modal-text">Birthday:${month}/${day}/${year}</p>
               </div>
       `;
-    }
-
-
+      }
       document.querySelector('div').innerHTML += card;
 
       $('#modal-close-btn').on('click', () => { //make X button work
         $('.modal-container').remove();
       });
   }//end popup
+
   //when clicked, card should popup
-  $('.card').on('click', () => {
-    let clickedCard = $('.card').index(this);
+  $('.card').on('click', (e) => {
+    console.log(e.target);
+    let clickedCard = $('.card').index(e.target); //.eq(i)
     console.log(clickedCard); //not getting expected output
     popup(data[clickedCard]);
+    //getting the index of whatever is clicked and showing its data
   });
+
 } //end displayEmployees
 
 
-function displayMatches(e){
+function displayMatches(){
   $('.card').hide();
   $('.no-results').hide();
   /*selecting any of the cards text, The first index of the element in the array;
@@ -119,9 +115,4 @@ function displayMatches(e){
     EVENT LISTENERS
 ////////////////////*/
 
-$('#search-input').on('keyup', displayMatches);//keyup for live search
-
-
-/*//////////////
-    POST DATA
-//////////////*/
+$('#search-input').on('keyup', displayMatches);//keyup for live search filter
