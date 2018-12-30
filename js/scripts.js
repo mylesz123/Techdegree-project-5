@@ -56,7 +56,7 @@ function displayEmployees(data){
     //console.log(data);
     let card;
     for(let i = 0; i < data.length; i++){
-      let date = data[i].dob.date
+      let date = data[i].dob.date;
       let month = date.slice(5,7);
       let day = date.slice(8,10);
       let year = date.slice(0,4);
@@ -76,20 +76,23 @@ function displayEmployees(data){
               </div>
       `;
       }
-      document.querySelector('div').innerHTML += card;
+      let div = document.querySelector('div');
+      $(div).append(card);
+      //console.log(div);
 
-      $('#modal-close-btn').on('click', () => { //make X button work
+      $('#modal-close-btn').on('click', function() { //make X button work
         $('.modal-container').remove();
       });
   }//end popup
 
   //when clicked, card should popup
-  $('.card').on('click', (e) => {
-    console.log(e.target);
-    let clickedCard = $('.card').index(e.target); //.eq(i)
-    console.log(clickedCard); //not getting expected output
-    popup(data[clickedCard]);
+  $('div .card').on('click', function() {
+    let clickedCard = $('div .card').index(this);
+    console.log('clicked card index: ' + clickedCard);
+    //for(let i = 0; i < data.length; i++){}
+    popup(data.clickedCard);
     //getting the index of whatever is clicked and showing its data
+    ///$('.modal-info-container')
   });
 
 } //end displayEmployees
