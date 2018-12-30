@@ -1,6 +1,6 @@
 console.log('hi');
-
-const url = 'https://randomuser.me/api/?results=12';
+let results;
+//let url = 'https://randomuser.me/api/?results=12';
 
 /*///////////////////
     SEARCH FEATURE
@@ -16,23 +16,30 @@ $('.search-container').append(searchBar);
 /*///////////////////
     FETCH FUNCTIONS
 ///////////////////*/
-
-$.ajax({
-  url: url,
-  dataType: 'json',
-  success: function(data) {
-    console.log(data.results);
-    displayEmployees(data.results);
-  }//end success
+fetch('https://randomuser.me/api?results=12&nat=us')
+  .then(res => res.json())
+  .then(data => {
+    results = data.results;
+    // console.log(results);
+    displayEmployees(results);
+    popup(results);
 });
 
+// $.ajax({
+//   url: url,
+//   dataType: 'json',
+//   success: function(data) {
+//     console.log(data.results);
+//     displayEmployees(data.results);
+//   }//end success
+// });
 /*///////////////////
     HELP FUNCTIONS
 ///////////////////*/
-
 //make, Image, First and Last Name, Email, & City  appear
 function displayEmployees(data){
-  console.log(data);
+  let dataC = data;
+  console.log(dataC);
   let employeeBubble = ''
   for (let i = 0; i < data.length; i++){
     //console.log(data[i]);
@@ -50,40 +57,7 @@ function displayEmployees(data){
     `;
   } //end LOOP
   $(employeeBubble).appendTo('#gallery');//show to screen    //console.log(g);
-
-
-  function popup(){
-    //console.log(data);
-    let card;
-    for(let i = 0; i < data.length; i++){
-      let date = data[i].dob.date;
-      let month = date.slice(5,7);
-      let day = date.slice(8,10);
-      let year = date.slice(0,4);
-      card = `
-        <div class="modal-container">
-          <div class="modal">
-            <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-              <div class="modal-info-container">
-                <img class="modal-img" src="${data[i].picture.large} " alt="profile picture">
-                <h3 id="name" class="modal-name cap">${data[i].name.first} ${data[i].name.last}</h3>
-                <p class="modal-text">${data[i].email}</p>
-                <p class="modal-text cap">${data[i].location.city}, ${data[i].location.state}</p>
-                <hr>
-                <p class="modal-text">${data[i].phone}</p>
-                <p class="modal-text">${data[i].location.street}, ${data[i].location.state} ${data[i].location.postcode}</p>
-                <p class="modal-text">Birthday:${month}/${day}/${year}</p>
-              </div>
-      `;
-      }
-      let div = document.querySelector('div');
-      $(div).append(card);
-      //console.log(div);
-
-      $('#modal-close-btn').on('click', function() { //make X button work
-        $('.modal-container').remove();
-      });
-  }//end popup
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //when clicked, card should popup
   $('div .card').on('click', function() {
@@ -95,7 +69,41 @@ function displayEmployees(data){
     ///$('.modal-info-container')
   });
 
-} //end displayEmployees
+}; //end displayEmployees
+
+function popup(data){
+  console.log(results);
+  let card;
+  for(let i = 0; i < results.length; i++){
+
+    let datE = results[i].dob.date;
+    let month = datE.slice(5,7);
+    let day = datE.slice(8,10);
+    let year = datE.slice(0,4);
+    card = `
+        <div class="modal">
+          <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+            <div class="modal-info-container">
+              <img class="modal-img" src="${results[i].picture.large} " alt="profile picture">
+              <h3 id="name" class="modal-name cap">${results[i].name.first} ${results[i].name.last}</h3>
+              <p class="modal-text">${results[i].email}</p>
+              <p class="modal-text cap">${results[i].location.city}, ${results[i].location.state}</p>
+              <hr>
+              <p class="modal-text">${results[i].phone}</p>
+              <p class="modal-text">${results[i].location.street}, ${results[i].location.state} ${results[i].location.postcode}</p>
+              <p class="modal-text">Birthday:${month}/${day}/${year}</p>
+            </div>
+          </div>
+    `;
+    }//end for loop
+  let div = document.querySelector('div');
+  $('.modal-container').append(card);
+  //console.log(div);
+  $('#modal-close-btn').on('click', function() { //make X button work
+    $('.modal-container').remove();
+  });
+}//end popup
+
 
 
 function displayMatches(){
