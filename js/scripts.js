@@ -1,6 +1,6 @@
 console.log('hi');
 let results;
-//let url = 'https://randomuser.me/api/?results=12';
+let url = 'https://randomuser.me/api/?results=12';
 
 /*///////////////////
     SEARCH FEATURE
@@ -16,28 +16,28 @@ $('.search-container').append(searchBar);
 /*///////////////////
     FETCH FUNCTIONS
 ///////////////////*/
-fetch('https://randomuser.me/api?results=12&nat=us')
-  .then(res => res.json())
-  .then(data => {
-    results = data.results;
-    // console.log(results);
-    displayEmployees(results);
-});
-
-// $.ajax({
-//   url: url,
-//   dataType: 'json',
-//   success: function(data) {
-//     console.log(data.results);
-//     displayEmployees(data.results);
-//   }//end success
+// fetch('https://randomuser.me/api?results=12&nat=us')
+//   .then(res => res.json())
+//   .then(data => {
+//     results = data.results;
+//     // console.log(results);
+//     displayEmployees(results);
 // });
+
+$.ajax({
+  url: url,
+  dataType: 'json',
+  success: function(data) {
+    results = data.results;
+    console.log(results);
+    displayEmployees(results);
+  }//end success
+});
 /*///////////////////
     HELP FUNCTIONS
 ///////////////////*/
 //make, Image, First and Last Name, Email, & City  appear
 function displayEmployees(data){
-  console.log(results);
   let employeeBubble = ''
   for (let i = 0; i < data.length; i++){
     //console.log(data[i]);
@@ -61,39 +61,35 @@ function displayEmployees(data){
   $('div .card').on('click', function() {
     let clickedCard = $('div .card').index(this);
     console.log('clicked card index: ' + clickedCard);
-    //for(let i = 0; i < data.length; i++){}
-    popup(data.clickedCard);
+    popup(clickedCard);
     //getting the index of whatever is clicked and showing its data
-    ///$('.modal-info-container')
   });
 
 }; //end displayEmployees
 
-function popup(results){
-  console.log(results);
+function popup(index){
+  //console.log(results);
   let card;
-  for(let i = 0; i < results.length; i++){
-
-    let datE = results[i].dob.date;
-    let month = datE.slice(5,7);
-    let day = datE.slice(8,10);
-    let year = datE.slice(0,4);
+  let datE = results[index].dob.date;
+  let month = datE.slice(5,7);
+  let day = datE.slice(8,10);
+  let year = datE.slice(index,4);
     card = `
       <div class="modal-container">
         <div class="modal">
           <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
             <div class="modal-info-container">
-              <img class="modal-img" src="${data[i].picture.large} " alt="profile picture">
-              <h3 id="name" class="modal-name cap">${data[i].name.first} ${data[i].name.last}</h3>
-              <p class="modal-text">${data[i].email}</p>
-              <p class="modal-text cap">${data[i].location.city}, ${data[i].location.state}</p>
+              <img class="modal-img" src="${results[index].picture.large} " alt="profile picture">
+              <h3 id="name" class="modal-name cap">${results[index].name.first} ${results[index].name.last}</h3>
+              <p class="modal-text">${results[index].email}</p>
+              <p class="modal-text cap">${results[index].location.city}, ${results[index].location.state}</p>
               <hr>
-              <p class="modal-text">${data[i].phone}</p>
-              <p class="modal-text">${data[i].location.street}, ${data[i].location.state} ${data[i].location.postcode}</p>
+              <p class="modal-text">${results[index].phone}</p>
+              <p class="modal-text">${results[index].location.street}, ${results[index].location.state} ${results[index].location.postcode}</p>
               <p class="modal-text">Birthday:${month}/${day}/${year}</p>
             </div>
     `;
-    }//end for loop
+
   let div = document.querySelector('div');
   $(div).append(card);
   //console.log(div);
@@ -111,10 +107,10 @@ function displayMatches(){
   for (let i = 0; i < $('.card').length; i++) {
     const search = $('.card #name').eq(i).text().indexOf($(this).val());
     if (search != -1) {//if found, show card w the match
-      $('.card').eq(i).attr("id", "match").show();
+      $('.card').eq(i).attr("id", "yup").show();
     }
   }
-  if ($('#match').length < 1) {
+  if ($('#yup').length < 1) {
     $('.no-results').show();
   }
 }
